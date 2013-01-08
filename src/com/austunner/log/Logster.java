@@ -56,18 +56,8 @@ public class Logster {
             }
             
         } catch (IOException ioe) {
-            try {
-                // if we get ioe, try to reopen stream and append again, just one time
-                fos = new FileOutputStream(filePath, true);
-                writer = new OutputStreamWriter(fos, "UTF-8");
-                writer.append(ioe.getLocalizedMessage());
-                writer.append(msg).append(NEWLINE);
-                writer.flush();
-            } catch (IOException e) {
-                log.error("Second attempt to log failed", e);
-                shutdown();
-            }
-            
+            log.error("Attempt to log failed", ioe);
+            shutdown();
         }
     }
     
@@ -75,7 +65,7 @@ public class Logster {
         if (writer != null) {
             try {
                 log.debug("Shutting down logster");
-                writer.flush();
+                // writer.flush(); redundant to use flush and close.
                 writer.close();
             } catch (Exception e) {
                 log.error("Can't shutdown logster", e);
@@ -83,9 +73,9 @@ public class Logster {
         }
     }
     
-    public static void main(String[] argv) {
-        Logster logger = new Logster("");
-        logger.logIt("LINE 1");
-        logger.logIt("LINE 2");
-    }
+//    public static void main(String[] argv) {
+//        Logster logger = new Logster("");
+//        logger.logIt("LINE 1");
+//        logger.logIt("LINE 2");
+//    }
 }
